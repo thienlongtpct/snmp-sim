@@ -1,0 +1,63 @@
+from SnmpAgent.Port import Port, PortStatus
+from SnmpAgent.Device import Device, DeviceType, DeviceStatus
+
+from random import seed
+from random import randint
+from datetime import datetime
+
+class Switch(Device):
+    def __init__(self, name, ports, lan):
+        seed(datetime.now())
+        super().__init__(name)
+        super().set_device(DeviceType.Switch)
+        self.ports = [Port(i, randint(0, 1024)) for i in range(1, int(ports)+1)]
+        self.lan = lan
+
+    def to_dict(self):
+        return {
+            "id": id(self),
+            "status": self.status.name,
+            "name": self.name,
+            "device": self.device.name,
+            "ports": [port.to_dict() for port in self.ports],
+            "lan": self.lan
+        }
+
+    def start_port(self, port):
+        self.ports[port-1].start()
+        if self.has_shutdown_port():
+            self.set_status(DeviceStatus.Warning)
+        else:
+            self.set_status(DeviceStatus.Up)
+
+    def shutdown_port(self, port):
+        self.ports[port-1].shutdown()
+        if self.has_shutdown_port():
+            self.set_status(DeviceStatus.Warning)
+        else:
+            self.set_status(DeviceStatus.Up)
+
+    def get_start_ports(self):
+        return [port.get_index() for port in filter(lambda port: port.get_state() == PortStatus.ON, self.ports)]
+
+    def get_shutdown_ports(self):
+        return map(lambda port: port.get_index(), filter(lambda port: port.get_state() == PortStatus.OFF, self.ports))
+
+    def has_shutdown_port(self):
+        return len(list(filter(lambda port: port.get_state() == PortStatus.OFF, self.ports))) > 0
+
+    def start(self):
+        for port in self.ports:
+            port.start()
+        self.set_status(DeviceStatus.Up)
+
+    def shutdown(self):
+        for port in self.ports:
+            port.shutdown()
+        self.set_status(DeviceStatus.Down)
+
+    def get_lan(self):
+        return self.lan
+
+    def set_lan(self, lan):
+        self.lan = lan

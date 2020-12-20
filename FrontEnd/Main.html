@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dummy backend</title>
+    <link href="bootstrap-5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="bootstrap-5.0.0-beta1/dist/js/bootstrap.min.js"></script>
+    <link href="Main.css" rel="stylesheet">
+    <script src="fontawesome-free-5.15.1-web/js/all.js"></script>
+    <script src="jquery-3.5.1.js"></script>
+</head>
+<body>
+    <div class="container py-5">
+        <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#add-device-modal">
+            Thêm thiết bị
+        </button>
+        <div class="modal fade" id="add-device-modal" tabindex="-1" aria-labelledby="add-device-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-device-label">Thêm thiết bị mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                        <div class="row mb-4">
+                            <div class="col-4">Thiết bị</div>
+                            <div class="col-8">
+                                <select class="form-select" aria-label="Select device's type" id="device-type">
+                                    <option value="other" selected>Khác</option>
+                                    <option value="switch">Switch</option>
+                                    <option value="router">Router</option>
+                                    <option value="pc">PC</option>
+                                </select>
+                            </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-4">
+                                    <label for="name">Tên</label>
+                                </div>
+                                <div class="col-8">
+                                    <input type="text" class="form-control" id="name"
+                                           placeholder="Tên thiết bị">
+                                </div>
+                            </div>
+                            <div class="row mb-4 switch router hide optional">
+                                <div class="col-4">
+                                    <label for="ports">Số cổng:</label>
+                                </div>
+                                <div class="col-8">
+                                    <input type="text" class="form-control" id="ports"
+                                           placeholder="Số cổng (port) của thiết bị">
+                                </div>
+                            </div>
+                            <div class="row mb-4 router hide optional">
+                                <div class="col-4">
+                                    <label for="wan">WAN:</label>
+                                </div>
+                                <div class="col-8">
+                                    <input type="text" class="form-control" id="wan"
+                                           placeholder="WAN IP của router">
+                                </div>
+                            </div>
+                            <div class="row mb-4 switch router pc hide optional">
+                                <div class="col-4">
+                                    <label for="lan">LAN:</label>
+                                </div>
+                                <div class="col-8">
+                                    <input type="text" class="form-control" id="lan"
+                                           placeholder="LAN IP của router">
+                                </div>
+                            </div>
+                            <div class="row mb-4 pc hide optional">
+                                <div class="col-4">
+                                    <label for="os">Hệ điều hành:</label>
+                                </div>
+                                <div class="col-8">
+                                    <input type="text" class="form-control" id="os"
+                                           placeholder="Hệ điều hành">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-primary" id="add-device" data-bs-dismiss="modal">Thêm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                 DANH SÁCH THIẾT BỊ
+            </div>
+            <div class="card-body p-4" id="list-devices">
+            </div>
+        </div>
+    </div>
+    <script src="Main.js"></script>
+</body>
+</html>
