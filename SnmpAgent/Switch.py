@@ -5,6 +5,7 @@ from random import seed
 from random import randint
 from datetime import datetime
 
+
 class Switch(Device):
     def __init__(self, name, ports, lan):
         seed(datetime.now())
@@ -24,27 +25,29 @@ class Switch(Device):
         }
 
     def start_port(self, port):
-        self.ports[port-1].start()
-        if self.has_shutdown_port():
-            self.set_status(DeviceStatus.Warning)
-        else:
-            self.set_status(DeviceStatus.Up)
+        if self.get_status() == DeviceStatus.Up or self.get_status() == DeviceStatus.Warning:
+            self.ports[port-1].start()
+            if self.has_shutdown_port():
+                self.set_status(DeviceStatus.Warning)
+            else:
+                self.set_status(DeviceStatus.Up)
 
     def shutdown_port(self, port):
-        self.ports[port-1].shutdown()
-        if self.has_shutdown_port():
-            self.set_status(DeviceStatus.Warning)
-        else:
-            self.set_status(DeviceStatus.Up)
+        if self.get_status() == DeviceStatus.Up or self.get_status() == DeviceStatus.Warning:
+            self.ports[port-1].shutdown()
+            if self.has_shutdown_port():
+                self.set_status(DeviceStatus.Warning)
+            else:
+                self.set_status(DeviceStatus.Up)
 
     def get_start_ports(self):
-        return [port.get_index() for port in filter(lambda port: port.get_state() == PortStatus.ON, self.ports)]
+        return [port.get_index() for port in filter(lambda port: port.get_status() == PortStatus.On, self.ports)]
 
     def get_shutdown_ports(self):
-        return map(lambda port: port.get_index(), filter(lambda port: port.get_state() == PortStatus.OFF, self.ports))
+        return map(lambda port: port.get_index(), filter(lambda port: port.get_status() == PortStatus.Off, self.ports))
 
     def has_shutdown_port(self):
-        return len(list(filter(lambda port: port.get_state() == PortStatus.OFF, self.ports))) > 0
+        return len(list(filter(lambda port: port.get_status() == PortStatus.Off, self.ports))) > 0
 
     def start(self):
         for port in self.ports:
@@ -55,6 +58,9 @@ class Switch(Device):
         for port in self.ports:
             port.shutdown()
         self.set_status(DeviceStatus.Down)
+
+    def get_ports(self):
+        return self.ports
 
     def get_lan(self):
         return self.lan

@@ -6,7 +6,7 @@ class SnmpManager:
         self.devices = []
 
     def add_device(self, device):
-        self.devices.append(device.to_dict())
+        self.devices.append(device)
 
     def count_device(self):
         return len(self.devices)
@@ -18,7 +18,7 @@ class SnmpManager:
         return self.devices
 
     def to_dict(self):
-        return {'devices': self.devices}
+        return {'devices': [device.to_dict() for device in self.devices]}
 
 
 

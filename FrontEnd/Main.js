@@ -10,13 +10,41 @@ addDevice = (response) => {
         $(header).attr("data-target", "#collapseExample");
 
             let content = document.createElement('div');
-            $(content).addClass('row');
+            $(content).addClass('row justify-content-center');
 
                 let name = document.createElement('div');
-                $(name).addClass('col-3');
+                $(name).addClass('col-5');
                 $(name).text(response.name);
 
+                let status = document.createElement('div');
+                $(status).text('⦿ '+response.status);
+
+                let icon = document.createElement('div');
+
+                if (response.status === "Unknown") {
+                    $(status).attr('class', 'col-3 fw-bold text-end text-secondary');
+                    $(icon).attr('class', 'col-1 text-end text-secondary');
+                    $(icon).html('<i class="fas fa-question"/>');
+                }
+                if (response.status === "Warning") {
+                    $(status).attr('class', 'col-3 fw-bold text-end text-warning');
+                    $(icon).attr('class', 'col-1 text-end text-warning');
+                    $(icon).html('<i class="fas fa-exclamation"/>');
+                }
+                if (response.status === "Down") {
+                    $(status).attr('class', 'col-3 fw-bold text-end text-danger');
+                    $(icon).attr('class', 'col-1 text-end text-danger');
+                    $(icon).html('<i class="fas fa-times"/>');
+                }
+                if (response.status === "Up") {
+                    $(status).attr('class', 'col-3 fw-bold text-end text-success');
+                    $(icon).attr('class', 'col-1 text-end text-success');
+                    $(icon).html('<i class="fas fa-check"/>');
+                }
+
                 $(content).append(name);
+                $(content).append(status);
+                $(content).append(icon);
 
             $(header).append(content);
 
@@ -44,30 +72,31 @@ addDevice = (response) => {
                     let body_name = document.createElement('div');
                     $(body_name).attr('id', "name-"+response.id);
                     $(body_name).addClass('col-3');
-                    $(body_name).html('<input class="form-control">');
+                    $(body_name).html('<input class="form-control editable" disabled>');
                     $(body_name).children().val(response.name);
 
-                    let body_status_label = document.createElement('strong');
-                    $(body_status_label).addClass('col-1 align-self-center');
-                    $(body_status_label).text('Status');
-                    let body_status = document.createElement('div');
-                    $(body_status).attr('id', "status-"+response.id);
-                    $(body_status).addClass('col-3');
-                    $(body_status).html('' +
-                        '<select class="form-select" aria-label="Select status\'s type">\n' +
-'                           <option value="Down">Down</option>\n' +
-'                           <option value="Up">Up</option>\n' +
-'                           <option value="Warning">Warning</option>\n' +
-'                           <option value="Unknown">Unknown</option>\n' +
-'                       </select>');
-                    $(body_status).children("select").val(response.status);
+                    let body_up_all_label = document.createElement('strong');
+                    $(body_up_all_label).addClass('col-2 align-self-center');
+                    $(body_up_all_label).text('Bật thiết bị');
+                    let body_up_all = document.createElement('div');
+                    $(body_up_all).attr('id', "status-"+response.id);
+                    $(body_up_all).addClass('col-2');
+                    $(body_up_all).css('display', 'flex');
+                    $(body_up_all).css('align-items', 'center');
+                    $(body_up_all).css('justify-content', 'flex-end');
+                    $(body_up_all).html(
+                            '<label class="switch-bar long-bar">\n' +
+                            '     <input type="checkbox" class="editable" disabled>\n' +
+                            '     <span class="slider round""></span>\n' +
+                            '</label>\n');
+                    $(body_up_all).children().children("input").prop('checked', response.status === "Up" || response.status === "Warning");
 
                     $(first_row).append(body_device_label);
                     $(first_row).append(body_device);
                     $(first_row).append(body_name_label);
                     $(first_row).append(body_name);
-                    $(first_row).append(body_status_label);
-                    $(first_row).append(body_status);
+                    $(first_row).append(body_up_all_label);
+                    $(first_row).append(body_up_all);
 
                 $(body).append(first_row);
 
@@ -89,7 +118,7 @@ addDevice = (response) => {
                     let body_wan = document.createElement('div');
                     $(body_wan).attr('id', "wan-"+response.id);
                     $(body_wan).addClass('col-3');
-                    $(body_wan).html('<input class="form-control">');
+                    $(body_wan).html('<input class="form-control editable" disabled>');
                     $(body_wan).children().val(response.wan);
 
                     let body_lan_label = document.createElement('strong');
@@ -98,7 +127,7 @@ addDevice = (response) => {
                     let body_lan = document.createElement('div');
                     $(body_lan).attr('id', "lan-"+response.id);
                     $(body_lan).addClass('col-3');
-                    $(body_lan).html('<input class="form-control">');
+                    $(body_lan).html('<input class="form-control editable" disabled>');
                     $(body_lan).children().val(response.lan);
 
                     $(second_row).append(body_ports_label);
@@ -128,7 +157,7 @@ addDevice = (response) => {
                     let body_lan = document.createElement('div');
                     $(body_lan).attr('id', "lan-"+response.id);
                     $(body_lan).addClass('col-3');
-                    $(body_lan).html('<input class="form-control">');
+                    $(body_lan).html('<input class="form-control editable" disabled>');
                     $(body_lan).children().val(response.lan);
 
                     $(second_row).append(body_ports_label);
@@ -156,7 +185,7 @@ addDevice = (response) => {
                     let body_lan = document.createElement('div');
                     $(body_lan).attr('id', "lan-"+response.id);
                     $(body_lan).addClass('col-3');
-                    $(body_lan).html('<input class="form-control">');
+                    $(body_lan).html('<input class="form-control editable" disabled>');
                     $(body_lan).children().val(response.lan);
 
                     $(second_row).append(body_os_label);
@@ -194,8 +223,8 @@ addDevice = (response) => {
                         $(status).html(
                             '\n' +
                             '<label class="switch-bar">\n' +
-                            '     <input type="checkbox">\n' +
-                            '     <span class="slider round""></span>\n' +
+                            '     <input type="checkbox" class="editable" disabled>\n' +
+                            '     <span class="slider round"></span>\n' +
                             '</label>\n'
                         );
                         $(status).children().children("input").prop('checked', port.status === "On");
@@ -232,6 +261,7 @@ addDevice = (response) => {
                 $(edit).addClass('btn btn-primary');
                 $(edit).text('Edit');
                 $(edit).click(() => {
+                    $(".editable").removeAttr('disabled');
                     $(edit).toggleClass('hide');
                     $(reset).toggleClass('hide');
                     $(save).toggleClass('hide');
@@ -242,7 +272,7 @@ addDevice = (response) => {
                 $(reset).addClass('btn btn-secondary me-2 hide');
                 $(reset).text('Reset');
                 $(reset).click(() => {
-
+                    $(".editable").attr('disabled', true);
                     fetch('http://127.0.0.1:5000/get_device/'+response.id, {
                         method: 'GET',
                         headers: {
@@ -261,7 +291,7 @@ addDevice = (response) => {
                             }
 
                             $("#name-"+response.id).children().val(response.name);
-                            $("#status-"+response.id).children().val(response.status);
+                            $("#status-"+response.id).children().children().prop('checked', response.status === "Up" || response.status === "Warning");
                             $("#lan-"+response.id).children().val(response.lan);
                             $("#wan-"+response.id).children().val(response.wan);
                         })
@@ -276,6 +306,7 @@ addDevice = (response) => {
                 $(save).addClass('btn btn-primary hide');
                 $(save).text('Save');
                 $(save).click(() => {
+                    $(".editable").attr('disabled', true);
                     let ports = [];
                     for (let i in response.ports) {
                         let port = response.ports[i];
@@ -300,7 +331,7 @@ addDevice = (response) => {
                     let data = {
                         "id": response.id,
                         "name": $("#name-"+response.id).children().val(),
-                        "status": $("#status-"+response.id).children().val(),
+                        "status": $("#status-"+response.id).children().children().prop('checked') ? "Up" : "Down",
                         "lan": $("#lan-"+response.id).children().val(),
                         "wan": $("#wan-"+response.id).children().val(),
                         "ports": ports
@@ -313,13 +344,48 @@ addDevice = (response) => {
                         },
                         body: JSON.stringify(data)
                     })
+                        .then(response => response.json())
+                        .then(device => {
+                            $(name).text(device.name);
+                            $(status).text('⦿ '+device.status);
+                            if (device.status === "Unknown") {
+                                $(status).attr('class', 'col-3 fw-bold text-end text-secondary');
+                                $(icon).attr('class', 'col-1 text-end text-secondary');
+                                $(icon).html('<i class="fas fa-question"/>');
+                            }
+                            if (device.status === "Warning") {
+                                $(status).attr('class', 'col-3 fw-bold text-end text-warning');
+                                $(icon).attr('class', 'col-1 text-end text-warning');
+                                $(icon).html('<i class="fas fa-exclamation"/>');
+                            }
+                            if (device.status === "Down") {
+                                $(status).attr('class', 'col-3 fw-bold text-end text-danger');
+                                $(icon).attr('class', 'col-1 text-end text-danger');
+                                $(icon).html('<i class="fas fa-times"/>');
+                            }
+                            if (device.status === "Up") {
+                                $(status).attr('class', 'col-3 fw-bold text-end text-success');
+                                $(icon).attr('class', 'col-1 text-end text-success');
+                                $(icon).html('<i class="fas fa-check"/>');
+                            }
+                        })
 
-                    console.log($(name).text(data.name));
                     $(edit).toggleClass('hide');
                     $(reset).toggleClass('hide');
                     $(save).toggleClass('hide');
                 });
                 buttonGroup.append(save);
+
+                $(body_up_all).change(() => {
+                    for (let i in response.ports) {
+                        let port = response.ports[i];
+                        let port_status = $('#port-status-' + response.id + '-' + port.index);
+                        $(port_status).children().children("input")
+                            .prop('checked', $(body_up_all).children().children().prop('checked'));
+                        $(port_status).children().children("input")
+                            .prop('disabled', !$(body_up_all).children().children().prop('checked'));
+                    }
+                });
 
             $(body).append(buttonGroup);
 
@@ -333,6 +399,7 @@ addDevice = (response) => {
 
     listDevices.append(newDevice);
 }
+
 
 fetch('http://127.0.0.1:5000/get_devices')
     .then(response => response.json())
@@ -370,8 +437,6 @@ $('#device-type').change(() => {
         }
     }
 });
-
-
 
 $('#add-device').click(() => {
     let data = {

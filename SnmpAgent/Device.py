@@ -46,3 +46,9 @@ class Device:
 
     def set_status(self, status):
         self.status = status
+
+    def start(self):
+        self.status = DeviceStatus.Up
+
+    def shutdown(self):
+        self.status = DeviceStatus.Down

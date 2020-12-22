@@ -24,9 +24,8 @@ def get_devices():
 @app.route('/get_device/<request_id>', methods=['GET'])
 def get_device(request_id):
     for device in manager.get_devices():
-        if int(request_id) == int(device['id']):
-            return device
-    print('hihi')
+        if int(request_id) == int(id(device)):
+            return device.to_dict()
     return ""
 
 
@@ -53,16 +52,23 @@ def edit_device():
     request_id = data['id']
 
     for device in manager.get_devices():
-        if int(request_id) == int(device['id']):
-            device['status'] = DeviceStatus[data['status']].name
-            device['name'] = data['name']
-            if 'lan' in device:
-                device['lan'] = data['lan']
-            if 'wan' in device:
-                device['wan'] = data['wan']
-            if 'ports' in device:
-                device['ports'] = data['ports']
-
+        if int(request_id) == int(id(device)):
+            if data['status'] == 'Up':
+                device.start()
+            else:
+                device.shutdown()
+            device.set_name(data['name'])
+            if hasattr(device, 'lan'):
+                device.set_lan(data['lan'])
+            if hasattr(device, 'wan'):
+                device.set_wan(data['wan'])
+            if hasattr(device, 'ports'):
+                for port in data['ports']:
+                    if port['status'] == 'On':
+                        device.start_port(port['index'])
+                    else:
+                        device.shutdown_port(port['index'])
+            return device.to_dict()
     return ""
 
 
